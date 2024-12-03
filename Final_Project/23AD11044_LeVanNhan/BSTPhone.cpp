@@ -9,7 +9,16 @@
 #include <cctype>
 
 using namespace std;
+//
+int countNodes(BSTPhone* root)
+{
+    if (root == nullptr) {
+        return 0;  // Nếu cây rỗng, không có node
+    }
 
+    // Đếm node ở cây con trái, cây con phải và chính node hiện tại
+    return 1 + countNodes(root->left) + countNodes(root->right);
+}
 // CRUD
 BSTPhone* CreatePhone(PhoneInformation& data) {
     BSTPhone* newPhone = new BSTPhone();
@@ -129,7 +138,7 @@ BSTPhone* ReadCSV(const string& filename) {
         PhoneInformation phone;
         string temp;
 
-        // Đọc PhoneID và chuyển đổi sang int
+        // Đọc PhoneID
         getline(ss, temp, ',');
         phone.PhoneID = stoi(temp);
 

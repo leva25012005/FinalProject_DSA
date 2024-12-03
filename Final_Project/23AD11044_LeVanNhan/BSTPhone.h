@@ -1,7 +1,5 @@
 #ifndef BSTPHONE_H
 #define BSTPHONE_H
-
-#include <iostream>
 #include <string>
 #include <vector>
 using namespace std;
@@ -19,9 +17,17 @@ struct BSTPhone {
     PhoneInformation data;
     BSTPhone* left;
     BSTPhone* right;
+    BSTPhone(PhoneInformation data)
+    {
+        this->data = data;
+        this->left = nullptr;
+        this->right = nullptr;
+    }
     BSTPhone() : left(nullptr), right(nullptr) {}
 };
-
+// Hầm đếm số node
+int countNodes(BSTPhone* root);
+//
 BSTPhone* CreatePhone(PhoneInformation& data);
 // Delete Tree
 void DeleteTree(BSTPhone* tree);

@@ -3,7 +3,9 @@
 
 #include <QMainWindow>
 #include <QTreeWidget>
+#include <qlabel.h>
 #include "BSTPhone.h"
+#include "LinkedList.h"
 QT_BEGIN_NAMESPACE
 namespace Ui {
 class MainWindow;
@@ -23,9 +25,13 @@ public:
     int totalItems;                     // Tổng số mục trong cây
     int totalPages;
 
+
 private slots:
     // Chức năng phân trang
     void PaginationInWidget(QTreeWidget* treeWidget, BSTPhone* treeRoot);
+    void showTreeInWidget(QTreeWidget* treeWidget, BSTPhone* treeRoot);
+    void ShowPage(QTreeWidget* widget, const std::vector<PhoneInformation>& nodes, int currentPage);
+
     // Sao chép cây
     BSTPhone* CopyTree(BSTPhone* node);
 
@@ -49,6 +55,19 @@ private slots:
     void cbSort_2_currentIndexChanged(int index);
     // CHọn trang
     void onPageChanged(int page);
+    // Sự kiện trích lọc
+    void PrintList(List& l, QTreeWidget* treeWidget, int pageNumber, int pageSize);
+    void UpdateTreeWidget(QTreeWidget* treeWidget);
+    void onComboBoxIndexChanged(int index);
+    //void Filertree(int storage, int ram, int year);
+    void onChangedIndex();
+    void cbS_currentIndexChanged(int index);
+    void cbR_currentIndexChanged(int index);
+    void cbY_currentIndexChanged(int index);
+
+    // SEARCH
+    void onSearchTextChanged(const QString &text);
+    void cbSearch_2_currentIndexChanged(int index);
 
 private:
     Ui::MainWindow *ui;
@@ -57,8 +76,9 @@ private:
     QString filePath = "E:\\Subject\\HK1_24-25\\Data Structure and Algorithms\\Project_DSA\\Phone Management System\\Phone3.csv";  // Đường dẫn tới file CSV
     BSTPhone* treeRoot = ReadCSV(filePath.toStdString());
     BSTPhone* originalTreeRoot = nullptr;
-
-
-
+    List* list = new List();
+    bool isPaginationEnabled = true;  // Mặc định là bật phân trang
+    std::vector<PhoneInformation> filteredNodes; // Danh sách node sau khi lọc
+    bool isFiltered = false; // Trạng thái lọc
 };
 #endif // MAINWINDOW_H
