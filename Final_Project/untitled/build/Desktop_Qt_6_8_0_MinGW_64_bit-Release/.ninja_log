@@ -1,0 +1,10 @@
+# ninja log v6
+4	793	7546769235846886	untitled_autogen/timestamp	4687cedf38d044a3
+4	793	7546769235846886	untitled_autogen/mocs_compilation.cpp	4687cedf38d044a3
+4	793	7546769235846886	E:/Subject/HK1_24-25/Data Structure and Algorithms/Project_DSA/Final_Project/untitled/build/Desktop_Qt_6_8_0_MinGW_64_bit-Release/untitled_autogen/timestamp	4687cedf38d044a3
+4	793	7546769235846886	E:/Subject/HK1_24-25/Data Structure and Algorithms/Project_DSA/Final_Project/untitled/build/Desktop_Qt_6_8_0_MinGW_64_bit-Release/untitled_autogen/mocs_compilation.cpp	4687cedf38d044a3
+799	2095	7546769237186682	CMakeFiles/untitled.dir/main.cpp.obj	e74082151f666815
+796	2176	7546769237156738	CMakeFiles/untitled.dir/untitled_autogen/mocs_compilation.cpp.obj	71857dcd805813c8
+803	2289	7546769237236702	CMakeFiles/untitled.dir/BSTPhone.cpp.obj	7221c2aaaa463552
+802	2701	7546769237216738	CMakeFiles/untitled.dir/mainwindow.cpp.obj	1715d3fa513f8ee7
+2701	2827	7546769256204653	untitled.exe	4c4dcedab9bee4da

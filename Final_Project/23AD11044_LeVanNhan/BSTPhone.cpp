@@ -3,13 +3,13 @@
 #include <iostream>
 #include <fstream>
 #include <sstream>
-#include <queue>
 #include <algorithm>
 #include <vector>
 #include <cctype>
 
 using namespace std;
-//
+
+ // Hầm đếm số node
 int countNodes(BSTPhone* root)
 {
     if (root == nullptr) {
@@ -44,7 +44,6 @@ void DeleteTree(BSTPhone* tree) {
     // Xóa node hiện tại
     delete tree;
 }
-
 BSTPhone* AddPhone(BSTPhone* Tree, PhoneInformation& data) {
     // Nếu cây rỗng, tạo Node mới
     if (Tree == nullptr)
@@ -111,17 +110,20 @@ BSTPhone* FindNode(BSTPhone* t, int id)
         return FindNode(t->right, id);  // Nếu id lớn hơn PhoneID, tìm sang nhánh phải
     return FindNode(t->left, id);  // Nếu id nhỏ hơn PhoneID, tìm sang nhánh trái
 }
+// Tìm Node có ID nhỏ nhất
 BSTPhone* FindMinNode(BSTPhone* t){
     while (t && t->left)
         t = t->left;
     return t;
 }
+// Tìm Node có id lớn nhất
 BSTPhone* FindMaxNode(BSTPhone* t) {
     while (t && t->right)
         t = t->right;
     return t;
 }
 // File
+// Đọc file
 BSTPhone* ReadCSV(const string& filename) {
     ifstream file(filename);
     string line;
@@ -186,6 +188,7 @@ void InOrderWriteToCSV(BSTPhone* tree, ofstream& file)
     // Duyệt cây con phải
     InOrderWriteToCSV(tree->right, file);
 }
+// Ghi File
 void WriteCSV(const string& filename, BSTPhone* tree)
 {
     ofstream file(filename);
@@ -204,8 +207,6 @@ void WriteCSV(const string& filename, BSTPhone* tree)
     file.close();
     cout << "Data written to file successfully!" << endl;
 }
-
-
 // Sort
 void InOrderToArray(BSTPhone* t, vector<PhoneInformation>& arr) {
     if (t == nullptr) return;
@@ -231,14 +232,15 @@ BSTPhone* ArrayToBST(vector<PhoneInformation>& arr, int start, int end) {
     return t;
 }
 // Model
-// MergeSỏt
+// MergeSort
 void merge(vector<PhoneInformation>& arr, int left, int mid, int right, bool isAscending) {
-    int n1 = mid - left + 1;
-    int n2 = right - mid;
+    int n1 = mid - left + 1; // Nửa trái của cây
+    int n2 = right - mid; // Nữa phải của cây
 
     // Tạo các mảng tạm thời
     vector<PhoneInformation> leftArr(n1), rightArr(n2);
 
+    // Lưu vào các mảng của cây
     for (int i = 0; i < n1; i++)
         leftArr[i] = arr[left + i];
     for (int j = 0; j < n2; j++)
@@ -248,7 +250,8 @@ void merge(vector<PhoneInformation>& arr, int left, int mid, int right, bool isA
 
     // Trộn hai mảng con lại với nhau
     while (i < n1 && j < n2) {
-        bool condition = isAscending ? leftArr[i].PhoneModel < rightArr[j].PhoneModel : leftArr[i].PhoneModel > rightArr[j].PhoneModel;
+        bool condition = isAscending ? leftArr[i].PhoneModel < rightArr[j].PhoneModel // tăng dần
+                                     : leftArr[i].PhoneModel > rightArr[j].PhoneModel;// giảm dần
 
         if (condition) {
             arr[k] = leftArr[i];
@@ -290,17 +293,14 @@ void InsertionSortByModel(vector<PhoneInformation>& arr, bool isAscending) {
         PhoneInformation key = arr[i];
         int j = i - 1;
 
-        // Di chuyển các phần tử có giá trị lớn hơn (nếu là sắp xếp giảm) hoặc nhỏ hơn (nếu là sắp xếp tăng)
-        bool condition = isAscending ? arr[j].PhoneModel > key.PhoneModel : arr[j].PhoneModel < key.PhoneModel;
-
-        while (j >= 0 && condition) {
+        // Sắp xếp tăng hoặc giảm dần dựa trên `isAscending`
+        while (j >= 0 && (isAscending ? arr[j].PhoneModel > key.PhoneModel : arr[j].PhoneModel < key.PhoneModel)) {
             arr[j + 1] = arr[j];
-            j = j - 1;
+            j--;
         }
         arr[j + 1] = key;
     }
 }
-
 // Price
 // Quick Sort
 int Partition(vector<PhoneInformation>& arr, int low, int high, bool isAscending) {
@@ -309,7 +309,8 @@ int Partition(vector<PhoneInformation>& arr, int low, int high, bool isAscending
 
     for (int j = low; j < high; j++) {
         // So sánh:
-        bool condition = isAscending ?  arr[j].PhonePrice < pivot.PhonePrice : arr[j].PhonePrice > pivot.PhonePrice;
+        bool condition = isAscending ?  arr[j].PhonePrice < pivot.PhonePrice // tăng dần
+                                     : arr[j].PhonePrice > pivot.PhonePrice; // giảm dần
         if (condition) {
             i++;
             swap(arr[i], arr[j]);
@@ -333,7 +334,8 @@ void BubbleSortByPrice(vector<PhoneInformation>& arr, bool isAscending) {
     int n = arr.size();
     for (int i = 0; i < n - 1; i++) {
         for (int j = 0; j < n - i - 1; j++) {
-            bool condition = isAscending ? arr[j].PhonePrice > arr[j + 1].PhonePrice : arr[j].PhonePrice < arr[j + 1].PhonePrice;
+            bool condition = isAscending ? arr[j].PhonePrice > arr[j + 1].PhonePrice // tăng dần
+                                         : arr[j].PhonePrice < arr[j + 1].PhonePrice; // giảm dần
             if (condition) {
                 // Swap nếu điều kiện thỏa mãn
                 swap(arr[j], arr[j + 1]);
@@ -350,7 +352,7 @@ BSTPhone* SortTree(BSTPhone* t, int choice, bool isAscending) {
     // 2. Sắp xếp mảng
     if (choice == 1)  // model a--z
         MergeSortByModel(arr, 0, (int)arr.size() - 1, isAscending);
-    if(choice == 2) // model a --> z
+    if(choice == 2) // model z -- a
         InsertionSortByModel(arr, isAscending);
     if (choice == 3) // Price - ascending
         QuickSortByPrice(arr, 0, (int)arr.size() - 1, isAscending);
@@ -360,86 +362,4 @@ BSTPhone* SortTree(BSTPhone* t, int choice, bool isAscending) {
     // 3. Xây dựng lại cây từ mảng đã sắp xếp
     return ArrayToBST(arr, 0, (int)arr.size() - 1);
 }
-// Search
-BSTPhone* ArrayToBST2(const vector<BSTPhone*>& list, int start, int end) {
-    // Điều kiện dừng: nếu start > end thì không có cây con, trả về nullptr
-    if (start > end) return nullptr;
 
-    // Tìm phần tử ở giữa
-    int mid = (start + end) / 2;
-
-    // Tạo node mới từ phần tử ở giữa
-    BSTPhone* t = new(std::nothrow) BSTPhone();  // Sử dụng new(std::nothrow) để tránh exception khi thất bại
-    if (t == nullptr) {
-        cerr << "Memory allocation failed!" << endl; // Thông báo nếu cấp phát bộ nhớ thất bại
-        return nullptr;
-    }
-
-    t->data = list[mid]->data;  // Gán giá trị cho node
-
-    t->left = ArrayToBST2(list, start, mid - 1);
-    t->right = ArrayToBST2(list, mid + 1, end);
-
-    // Trả về con trỏ tới node hiện tại
-    return t;
-}
-string toLowerCase(const std::string& str)
-{
-    std::string result = str;
-    std::transform(result.begin(), result.end(), result.begin(), [](unsigned char c)
-                   {
-                       return std::tolower(c); }
-                   );
-    return result;
-}
-vector<BSTPhone*> BFSForModel(BSTPhone* tree, string model)
-{
-    vector<BSTPhone*> result;  // Danh sách lưu kết quả tìm kiếm
-    if (tree == nullptr) {      // Nếu cây rỗng, trả về danh sách rỗng
-        return result;
-    }
-
-    queue<BSTPhone*> q;  // Sử dụng hàng đợi để thực hiện BFSForPrice
-    q.push(tree);         // Đưa node gốc vào hàng đợi
-
-    while (!q.empty()) {  // Duyệt hết tất cả các node
-        BSTPhone* current = q.front();  // Lấy node đầu tiên trong hàng đợi
-        q.pop();  // Xóa node đầu tiên trong hàng đợi
-
-        // Kiểm tra nếu giá trị của node hiện tại trùng với targetPrice
-        if (toLowerCase(current->data.PhoneModel) == toLowerCase(model)) {
-            result.push_back(current);  // Lưu node vào kết quả
-        }
-
-        // Nếu có nhánh trái, đẩy vào hàng đợi
-        if (current->left != nullptr) {
-            q.push(current->left);
-        }
-
-        // Nếu có nhánh phải, đẩy vào hàng đợi
-        if (current->right != nullptr) {
-            q.push(current->right);
-        }
-    }
-
-    return result;
-}
-BSTPhone* SearchByModel(BSTPhone* tree, const string& model) {
-    if (tree == nullptr) {
-        return nullptr; // Cây rỗng hoặc không tìm thấy
-    }
-
-    // So sánh model của node hiện tại
-    if (tree->data.PhoneModel == model) {
-        return tree; // Trả về node đầu tiên tìm thấy
-    }
-
-    // Tìm kiếm ở nhánh trái
-    BSTPhone* leftResult = SearchByModel(tree->left, model);
-    if (leftResult != nullptr) {
-        return leftResult; // Nếu tìm thấy ở nhánh trái, trả về
-    }
-
-    // Nếu không tìm thấy ở nhánh trái, tiếp tục tìm ở nhánh phải
-    return SearchByModel(tree->right, model);
-}

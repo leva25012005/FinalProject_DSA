@@ -27,19 +27,21 @@ public:
 
 
 private slots:
+
     // Chức năng phân trang
     void PaginationInWidget(QTreeWidget* treeWidget, BSTPhone* treeRoot);
-    void showTreeInWidget(QTreeWidget* treeWidget, BSTPhone* treeRoot);
     void ShowPage(QTreeWidget* widget, const std::vector<PhoneInformation>& nodes, int currentPage);
-
+    void showTreeInWidget(QTreeWidget* treeWidget, BSTPhone* treeRoot);
     // Sao chép cây
     BSTPhone* CopyTree(BSTPhone* node);
 
     // Button quay thay đổi trang
     void btnPrePage_2_clicked();
     void btnNextP_2_clicked();
+
     // Hiện thi thông tin khi chọn vào 1 hàng
     void treeWidget_itemClicked(QTreeWidgetItem *item, int column);
+
     // CRUD
     // Thêm một phần tử mới vào cây
     void btnAdd_2_clicked();
@@ -47,33 +49,33 @@ private slots:
     void btnDelete_2_clicked();
     // Cập nhật phần tử trong cây
     void btnUpdate_2_clicked();
+
     // Lưu File
     void btnSave_clicked();
+
     // Reset
     void btnClear_clicked();
+
     // Sort
     void cbSort_2_currentIndexChanged(int index);
+
     // CHọn trang
     void onPageChanged(int page);
-    // Sự kiện trích lọc
-    void PrintList(List& l, QTreeWidget* treeWidget, int pageNumber, int pageSize);
-    void UpdateTreeWidget(QTreeWidget* treeWidget);
-    void onComboBoxIndexChanged(int index);
-    //void Filertree(int storage, int ram, int year);
-    void onChangedIndex();
-    void cbS_currentIndexChanged(int index);
-    void cbR_currentIndexChanged(int index);
-    void cbY_currentIndexChanged(int index);
 
+    // Sự kiện trích lọc
+    void onChangedIndex();
+    void btnFilter_clicked();
     // SEARCH
     void onSearchTextChanged(const QString &text);
     void cbSearch_2_currentIndexChanged(int index);
+
+
 
 private:
     Ui::MainWindow *ui;
 
     // Đọc file CSV mặc định ngay khi khởi động
-    QString filePath = "E:\\Subject\\HK1_24-25\\Data Structure and Algorithms\\Project_DSA\\Phone Management System\\Phone3.csv";  // Đường dẫn tới file CSV
+    QString filePath = "E:/Subject/HK1_24-25/Data Structure and Algorithms/Project_DSA/Phone Management System/Phone3.csv";  // Đường dẫn tới file CSV
     BSTPhone* treeRoot = ReadCSV(filePath.toStdString());
     BSTPhone* originalTreeRoot = nullptr;
     List* list = new List();

@@ -361,7 +361,7 @@
    <widget class="QSpinBox" name="sbPage">
     <property name="geometry">
      <rect>
-      <x>50</x>
+      <x>80</x>
       <y>80</y>
       <width>42</width>
       <height>22</height>
@@ -389,56 +389,10 @@
        <x>10</x>
        <y>31</y>
        <width>421</width>
-       <height>81</height>
+       <height>98</height>
       </rect>
      </property>
      <layout class="QGridLayout" name="gridLayout_7">
-      <item row="1" column="0">
-       <widget class="QLabel" name="label_9">
-        <property name="text">
-         <string>Storage (GB)</string>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="1">
-       <widget class="QComboBox" name="cbS">
-        <item>
-         <property name="text">
-          <string>All</string>
-         </property>
-        </item>
-        <item>
-         <property name="text">
-          <string>32</string>
-         </property>
-        </item>
-        <item>
-         <property name="text">
-          <string>64</string>
-         </property>
-        </item>
-        <item>
-         <property name="text">
-          <string>128</string>
-         </property>
-        </item>
-        <item>
-         <property name="text">
-          <string>256</string>
-         </property>
-        </item>
-        <item>
-         <property name="text">
-          <string>512</string>
-         </property>
-        </item>
-        <item>
-         <property name="text">
-          <string>1024</string>
-         </property>
-        </item>
-       </widget>
-      </item>
       <item row="2" column="1">
        <widget class="QComboBox" name="cbR">
         <item>
@@ -488,17 +442,10 @@
         </item>
        </widget>
       </item>
-      <item row="2" column="0">
-       <widget class="QLabel" name="label_5">
+      <item row="1" column="0">
+       <widget class="QLabel" name="label_9">
         <property name="text">
-         <string>Ram</string>
-        </property>
-       </widget>
-      </item>
-      <item row="3" column="0">
-       <widget class="QLabel" name="label_4">
-        <property name="text">
-         <string>Year</string>
+         <string>Storage (GB)</string>
         </property>
        </widget>
       </item>
@@ -551,8 +498,74 @@
         </item>
        </widget>
       </item>
+      <item row="2" column="0">
+       <widget class="QLabel" name="label_5">
+        <property name="text">
+         <string>Ram</string>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="0">
+       <widget class="QLabel" name="label_4">
+        <property name="text">
+         <string>Year</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1">
+       <widget class="QComboBox" name="cbS">
+        <item>
+         <property name="text">
+          <string>All</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>32</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>64</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>128</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>256</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>512</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>1024</string>
+         </property>
+        </item>
+       </widget>
+      </item>
      </layout>
     </widget>
+   </widget>
+   <widget class="QPushButton" name="btnFilter">
+    <property name="geometry">
+     <rect>
+      <x>850</x>
+      <y>510</y>
+      <width>101</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Filter</string>
+    </property>
    </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">

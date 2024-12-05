@@ -1,7 +1,6 @@
 #ifndef BSTPHONE_H
 #define BSTPHONE_H
 #include <string>
-#include <vector>
 using namespace std;
 
 //BST
@@ -25,9 +24,10 @@ struct BSTPhone {
     }
     BSTPhone() : left(nullptr), right(nullptr) {}
 };
-// Hầm đếm số node
+
+ // Hầm đếm số node
 int countNodes(BSTPhone* root);
-//
+//Tao một node
 BSTPhone* CreatePhone(PhoneInformation& data);
 // Delete Tree
 void DeleteTree(BSTPhone* tree);
@@ -40,15 +40,11 @@ BSTPhone* ReadCSV(const string& filename);
 void WriteCSV(const string& filename, BSTPhone* tree);
 // Find
 BSTPhone* FindNode(BSTPhone* t, int id);
+// Tìm Node có ID nhỏ nhất
 BSTPhone* FindMinNode(BSTPhone* t);
+// Tìm Node có id lớn nhất
 BSTPhone* FindMaxNode(BSTPhone* t);
 // Sort
 BSTPhone* SortTree(BSTPhone* t, int choice, bool isAscending);
-// Search
-BSTPhone* ArrayToBST2(const vector<BSTPhone*>& list, int start, int end);
-vector<BSTPhone*> BFSForModel(BSTPhone* tree, string model);
-BSTPhone* SearchByModel(BSTPhone* tree, const string& model);
-
-string toLowerCase(const std::string& str);
 
 #endif // BSTPHONE_H

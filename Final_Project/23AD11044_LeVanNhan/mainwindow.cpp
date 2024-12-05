@@ -68,14 +68,16 @@ void DisplayTree(QTreeWidget* treeWidget, BSTPhone* node){
 void MainWindow::ShowPage(QTreeWidget* widget, const std::vector<PhoneInformation>& nodes, int currentPage) {
     widget->clear(); // Xóa dữ liệu cũ trong bảng
 
-    //totalItems = nodes.size();
-    // = (totalItems + itemsPerPage - 1) / itemsPerPage; // Số trang
+    if (nodes.empty()) { // Kiểm tra nếu danh sách trống
+        QMessageBox::information(this, "No Data", "No data available to display.");
+        return;
+    }
 
     // Xác định phạm vi dữ liệu hiển thị trên trang hiện tại
-    int startIdx = (currentPage - 1) * itemsPerPage;
-    int endIdx = startIdx + itemsPerPage;
+    int start = (currentPage - 1) * itemsPerPage;
+    int end = std::min(start + itemsPerPage, static_cast<int>(nodes.size())); // Đảm bảo không vượt quá kích thước
     // Hiển thị dữ liệu
-    for (int i = startIdx; i < endIdx; ++i) {
+    for (int i = start; i < end; ++i) {
         QTreeWidgetItem* item = new QTreeWidgetItem(widget);
         // Cập nhật các cột hiển thị thông tin của phone
         item->setText(0, QString::number(nodes[i].PhoneID));             // Cột 1: PhoneID
@@ -93,7 +95,6 @@ void MainWindow::ShowPage(QTreeWidget* widget, const std::vector<PhoneInformatio
     ui->sbPage->hide();
     ui->lbPage->hide();
 }
-//Dọc file
 void MainWindow::showTreeInWidget(QTreeWidget* treeWidget, BSTPhone* treeRoot) {
     // Tạo cây BST từ dữ liệu CSV
     treeWidget->clear();
@@ -174,10 +175,8 @@ MainWindow::MainWindow(QWidget *parent)
     // Kết nối sự kiện cho spin box
     connect(ui->sbPage, SIGNAL(valueChanged(int)), this, SLOT(onPageChanged(int)));
 
-    // Kết nối sự kiện cho combox Storage
-    connect(ui->cbS, &QComboBox::currentIndexChanged, this, &MainWindow::onChangedIndex);
-    connect(ui->cbR, &QComboBox::currentIndexChanged, this, &MainWindow::onChangedIndex);
-    connect(ui->cbY, &QComboBox::currentIndexChanged, this, &MainWindow::onChangedIndex);
+    // Kết nối sự kiện cho button Filter
+    connect(ui->btnFilter, &QPushButton::clicked, this, &MainWindow::btnFilter_clicked);
 
     // Kết nối sự kiện cho text search
     connect(ui->txtSearch_2, &QLineEdit::textChanged, this, &MainWindow::onSearchTextChanged);
@@ -196,8 +195,6 @@ MainWindow::~MainWindow()
 // Button thay đổi trang
 void MainWindow::btnNextP_2_clicked()
 {
-    //ui->treeWidget->clear();
-
     if (currentPage < totalPages) {
         // Nếu chưa đến trang cuối, tăng currentPage lên 1
         currentPage++;
@@ -208,13 +205,10 @@ void MainWindow::btnNextP_2_clicked()
         }
     } else
     {
-        //currentPage--;
         QMessageBox::information(this, "Notification", "You have reached the last page.");
         return;
     }
 
-    //ui->lbPage->setText(QString("Page: %1").arg(currentPage));
-    //PaginationInWidget(ui->treeWidget, treeRoot);
 }
 void MainWindow::btnPrePage_2_clicked()
 {
@@ -233,9 +227,6 @@ void MainWindow::btnPrePage_2_clicked()
         QMessageBox::information(this, "Notification", "You have reached the first page.");
         return;
     }
-
-    //ui->lbPage->setText(QString("Page: %1").arg(currentPage));
-    //PaginationInWidget(ui->treeWidget, treeRoot);
 }
 // Hiện thi thông tin khi chọn vào 1 hàng
 void MainWindow::treeWidget_itemClicked(QTreeWidgetItem *item, int column)
@@ -424,8 +415,11 @@ void MainWindow::btnUpdate_2_clicked()
 // Lưu File
 void MainWindow::btnSave_clicked()
 {
-    WriteCSV(filePath.toStdString(),treeRoot);
+    WriteCSV(filePath.toStdString(), treeRoot);
+    // Hiển thị thông báo thành công
+    QMessageBox::information(this, "Save Successful", "Data has been successfully saved to the file.");
 }
+
 // Reset
 void MainWindow::btnClear_clicked()
 {
@@ -482,7 +476,7 @@ void MainWindow::cbSort_2_currentIndexChanged(int index)
     case 3: //  price - asc
         treeRoot = SortTree(treeRoot, 4 ,true);
         break;
-    case 4: // price - desc
+    case 4: // price -
         treeRoot = SortTree(treeRoot, 4 ,false);
     }
 
@@ -499,106 +493,7 @@ void MainWindow::onPageChanged(int page)
     PaginationInWidget(ui->treeWidget, treeRoot);
 }
 // Hàm lọc
-// Hàm duyệt cây BST theo thứ tự inorder và tạo danh sách liên kết
-void BSTToLL(BSTPhone* tree, List& l)
-{
-    if(tree == nullptr)
-        return;
-
-    // Duyệt cây con bên trái
-    BSTToLL(tree->left, l);
-
-    // Tạo một node mới trong LinkedList với dữ liệu của tree
-    Node* newNode = CreateNode(tree->data);
-
-    // Chèn node vào cuối danh sách
-    InsertLast(l, newNode);
-
-    // Duyệt cây con bên phải
-    BSTToLL(tree->right, l);
-}
-void Filter(List& sourceList, List& newList, int storage)
-{
-    Node* current = sourceList.pHead;
-
-    // Duyệt qua danh sách gốc và lọc những node thỏa mãn điều kiện
-    while(current != nullptr)
-    {
-        if(current->data.PhoneStorage <= storage)
-        {
-            Node* newNode = CreateNode(current->data); // Tạo một node mới với dữ liệu từ node hiện tại
-            InsertLast(newList, newNode);
-        }
-        current = current->pNext;  // Chuyển đến node tiếp theo
-    }
-}
-void ListToBST(List& l, BSTPhone*& root) {
-    Node* current = l.pHead;
-
-    // Duyệt qua danh sách liên kết và chèn mỗi phần tử vào cây BST
-    while (current != nullptr) {
-        AddPhone(root, current->data); // Chèn phần tử vào BST
-        current = current->pNext; // Chuyển đến node tiếp theo trong danh sách
-    }
-}
-
-BSTPhone* MergeTrees(BSTPhone* dest, BSTPhone* source) {
-    if (source == nullptr) return dest;
-    dest = AddPhone(dest, source->data);
-    dest = MergeTrees(dest, source->left);
-    dest = MergeTrees(dest, source->right);
-    return dest;
-}
-bool IsMatch(int storage, int ram, int year, const PhoneInformation& data) {
-    if (storage == 0 && ram == 0 && year == 0) {
-        return false; // Bỏ qua nếu tất cả bằng 0
-    }
-    if (storage != 0 && ram != 0 && year != 0) {
-        return storage == data.PhoneStorage && ram == data.PhoneRam && year == data.PhoneYear;
-    }
-    if (storage != 0 && ram != 0) {
-        return storage == data.PhoneStorage && ram == data.PhoneRam;
-    }
-    if (storage != 0 && year != 0) {
-        return storage == data.PhoneStorage && year == data.PhoneYear;
-    }
-    if (ram != 0 && year != 0) {
-        return ram == data.PhoneRam && year == data.PhoneYear;
-    }
-    if (storage != 0) {
-        return storage == data.PhoneStorage;
-    }
-    if (ram != 0) {
-        return ram == data.PhoneRam;
-    }
-    if (year != 0) {
-        return year == data.PhoneYear;
-    }
-    return false; // Trường hợp không phù hợp
-}
-BSTPhone* Filertree(int storage, int ram, int year, BSTPhone* tree) {
-    if (tree == nullptr) return nullptr;
-
-    BSTPhone* resultTree = nullptr;
-
-    //Xử lý để trích lọc
-    if (IsMatch(storage, ram, year, tree->data)) {
-        resultTree = AddPhone(resultTree, tree->data);
-    }
-
-
-    // Duyệt qua cây trái và phải
-    BSTPhone* leftResult = Filertree(storage, ram, year, tree->left);
-    BSTPhone* rightResult = Filertree(storage, ram, year, tree->right);
-
-    // Kết hợp kết quả từ cây con
-    resultTree = MergeTrees(resultTree, leftResult);
-    resultTree = MergeTrees(resultTree, rightResult);
-
-    return resultTree;
-}
-
-void FilterNodes(int storage, int ram, int year, BSTPhone* tree, std::vector<PhoneInformation>& result) {
+void FilterNodes(int storage, int ram, int year, BSTPhone* tree, vector<PhoneInformation>& result) {
     if (tree == nullptr) return;
 
     // Kiểm tra điều kiện và thêm node vào danh sách nếu thỏa mãn
@@ -630,93 +525,23 @@ void MainWindow::onChangedIndex() {
     // Cập nhật trạng thái
     isFiltered = true;
 
-    // Tính tổng số trang
-    currentPage = 1;
-    totalPages = (filteredNodes.size() / itemsPerPage) + (totalPages % itemsPerPage > 0 ? 1 : 0); // Làm tròn lên để tính tổng số trang
-    // Hiển thị trang đầu tiên
+    // Kiểm tra nếu danh sách filteredNodes trống
+    if (filteredNodes.empty()) {
+        // Nếu trống, hiển thị MessageBox
+        QMessageBox::information(this, "No Results", "No items found matching the criteria.");
+        return;  // Không tiếp tục xử lý nếu danh sách trống
+    }
+
+    // Cập nhật giao diện với trang đầu tiên
     ShowPage(ui->treeWidget, filteredNodes, currentPage);
 }
-
-void MainWindow::cbS_currentIndexChanged(int index)
+void MainWindow::btnFilter_clicked()
 {
     onChangedIndex();
 }
-void MainWindow::cbR_currentIndexChanged(int index)
-{
-    onChangedIndex();
-}
-void MainWindow::cbY_currentIndexChanged(int index)
-{
-    onChangedIndex();
-}
-
-void MainWindow::PrintList(List& l, QTreeWidget* treeWidget, int pageNumber, int pageSize)
-{
-    if (treeWidget == nullptr) {
-        qDebug() << "treeWidget is null"; // Kiểm tra nếu treeWidget là nullptr
-        return;
-    }
-
-    Node* current = l.pHead;
-    int start = (pageNumber - 1) * pageSize;  // Vị trí bắt đầu trong danh sách
-    int end = start + pageSize;    // Vị trí kết thúc trong danh sách
-
-    int currentIndex = 0;
-
-    // Duyệt qua tất cả các phần tử trong danh sách liên kết
-    while (current != nullptr)
-    {
-        if (currentIndex >= start && currentIndex < end) {
-            // Tạo một QTreeWidgetItem cho mỗi node trong danh sách liên kết
-            QTreeWidgetItem* item = new QTreeWidgetItem();
-
-            // Cập nhật thông tin cho từng ô trong item
-            item->setText(0, QString::number(current->data.PhoneID));
-            item->setText(1, QString::fromStdString(current->data.PhoneBrand));
-            item->setText(2, QString::fromStdString(current->data.PhoneModel));
-            item->setText(3, QString::fromStdString(current->data.PhoneChipset));
-            item->setText(4, QString::fromStdString(current->data.PhoneGPU));
-            item->setText(5, QString::number(current->data.PhoneStorage));
-            item->setText(6, QString::number(current->data.PhoneRam));
-            item->setText(7, QString::number(current->data.PhonePrice));
-            item->setText(8, QString::number(current->data.PhoneYear));
-
-            // Thêm item vào QTreeWidget
-            treeWidget->addTopLevelItem(item);
-        }
-
-        // Chuyển đến node tiếp theo trong danh sách
-        current = current->pNext;
-        currentIndex++;
-    }
-}
-void MainWindow::UpdateTreeWidget(QTreeWidget* treeWidget)
-{
-    treeWidget->clear();  // Xóa tất cả các item cũ trong treeWidget
-
-    if (isPaginationEnabled) {
-        // Nếu phân trang đang bật, hiển thị phân trang từ kết quả lọc hoặc BST
-        PaginationInWidget(treeWidget, treeRoot);
-    } else {
-        // Nếu phân trang tắt, hiển thị toàn bộ dữ liệu từ BST mà không phân trang
-        currentPage = 1;  // Đảm bảo currentPage được khởi tạo lại
-        PrintList(*list, treeWidget, currentPage, itemsPerPage);  // Hiển thị toàn bộ danh sách
-    }
-}
-void MainWindow::onComboBoxIndexChanged(int index)
-{
-    if (index == 0) {  // Giả sử "0" là mục để tắt phân trang
-        isPaginationEnabled = false;  // Tắt phân trang
-        UpdateTreeWidget(ui->treeWidget);  // Cập nhật lại giao diện (hiển thị toàn bộ BST)
-    } else if (index == 1) {  // "1" là mục để bật phân trang
-        isPaginationEnabled = true;  // Bật phân trang
-        UpdateTreeWidget(ui->treeWidget);  // Cập nhật lại giao diện (hiển thị phân trang)
-    }
-}
-
 
 // Search
-BSTPhone* FindNodesByModel(BSTPhone* tree, const std::string& model) {
+BSTPhone* FindNodesByModel(BSTPhone* tree, const string& model) {
     if (!tree) return nullptr;  // Nếu cây rỗng, trả về nullptr
 
     Queue queue;  // Tạo một hàng đợi tùy chỉnh để duyệt cây theo BFS
@@ -824,4 +649,6 @@ void MainWindow::cbSearch_2_currentIndexChanged(int index)
         return;
     }
 }
+
+
 
